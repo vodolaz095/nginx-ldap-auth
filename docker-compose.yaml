@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: docker.io/library/nginx:1.27-alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - type: bind
+        source: ./contrib/conf.d/
+        target: /etc/nginx/conf.d/
+        read_only: true
+        bind:
+          selinux: Z
+      - type: bind
+        source: /var/tmp/nginx_ldap_auth.socket
+        target: /var/tmp/nginx_ldap_auth.socket
+        read_only: false
+        bind:
+          selinux: Z
+      - type: bind
+        source: ./contrib/www/
+        target: /usr/share/nginx/html/
+        read_only: true
+        bind:
+          selinux: Z
