@@ -11,7 +11,7 @@ import (
 )
 
 func (api *API) injectBasicAuth() {
-	api.engine.GET("/auth/basic", func(c *gin.Context) {
+	api.engine.GET("/subrequest/basic", func(c *gin.Context) {
 		var err error
 		username, password, ok := c.Request.BasicAuth()
 		if !ok {

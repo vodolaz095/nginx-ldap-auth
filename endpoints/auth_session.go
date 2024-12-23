@@ -10,7 +10,7 @@ import (
 )
 
 func (api *API) injectSession() {
-	api.engine.GET("/auth/session", func(c *gin.Context) {
+	api.engine.GET("/subrequest/session", func(c *gin.Context) {
 		user, err := api.Authenticator.Extract(c)
 		if err != nil {
 			if errors.Is(err, ldap4gin.ErrUnauthorized) {

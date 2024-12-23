@@ -6,7 +6,7 @@ docker/up:
 	docker ps
 
 docker/resource:
-	docker up -d jaeger ldap lam nginx
+	docker up -d jaeger ldap
 	docker ps
 
 docker/down:

@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,7 +37,10 @@ func (api *API) injectLoginForm() {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		c.String(http.StatusOK, "Welcome, %s!", user.String()) // todo WHOAMI
+		c.HTML(http.StatusOK, "profile.html", gin.H{
+			"title": fmt.Sprintf("Welcome, %s!", user.String()),
+			"user":  user,
+		})
 	})
 
 	api.engine.GET("/auth/logout", func(c *gin.Context) {
@@ -52,14 +56,17 @@ func (api *API) injectLoginForm() {
 		user, err := api.Authenticator.Extract(c)
 		if err != nil {
 			if errors.Is(err, ldap4gin.ErrUnauthorized) {
-				c.String(http.StatusUnauthorized, "anonimus")
+				c.Redirect(http.StatusFound, "/auth/login")
 				return
 			}
 			log.Error().Err(err).Msgf("Error rendering whoami: %s", err)
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		c.String(http.StatusOK, "Welcome, %s!", user.String())
+		c.HTML(http.StatusOK, "profile.html", gin.H{
+			"title": fmt.Sprintf("Welcome, %s!", user.String()),
+			"user":  user,
+		})
 	})
 
 	api.engine.Use(middlewares.CheckCSRF)
