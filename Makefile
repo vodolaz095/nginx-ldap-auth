@@ -1,3 +1,5 @@
+include make/*.mk
+
 # https://go.dev/blog/govulncheck
 # install it by `go install golang.org/x/vuln/cmd/govulncheck@latest`
 vuln:
