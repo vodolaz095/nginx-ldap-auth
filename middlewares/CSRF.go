@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"crypto/rand"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -39,8 +38,6 @@ func UseCSRF(router *gin.Engine) {
 		csrf := session.Get("csrf")
 		if csrf != nil {
 			c.Set("csrf", csrf)
-			c.Header("X-XSRF-TOKEN", fmt.Sprint(csrf))
-			c.SetCookie("XSRF-TOKEN", fmt.Sprint(csrf), 180, "/", "", !gin.IsDebugging(), false)
 			c.Next()
 			return
 		}
@@ -54,20 +51,18 @@ func UseCSRF(router *gin.Engine) {
 		if err != nil {
 			panic(err)
 		}
-		c.Header("X-XSRF-TOKEN", newCsrf)
-		c.SetCookie("XSRF-TOKEN", newCsrf, 180, "/", "", !gin.IsDebugging(), false)
 		c.Next()
 	})
 }
 
-// CheckCSRF checks csrf token in a way Axios sends it
+// CheckCSRF checks csrf token
 func CheckCSRF(c *gin.Context) {
 	span := trace.SpanFromContext(c.Request.Context())
 	switch c.Request.Method {
 	case http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete:
 		session := sessions.Default(c)
 		span.AddEvent("Validating CSRF token from session...")
-		actual := c.GetHeader("X-XSRF-TOKEN")
+		actual := c.PostForm("_csrf")
 		expected := session.Get("csrf").(string)
 
 		if actual != expected {

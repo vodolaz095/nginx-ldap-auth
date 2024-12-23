@@ -1,6 +1,5 @@
 podman/up:
-	podman-compose up -d
-	podman ps
+	podman-compose up --remove-orphans --build
 
 podman/resource:
 	podman-compose up -d jaeger ldap lam nginx

@@ -73,6 +73,8 @@ services:
           selinux: Z
     networks:
       - nginx_ldap_auth_network
+    depends_on:
+      - nginx-ldap-auth
 
   nginx-ldap-auth:
     build:
