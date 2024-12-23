@@ -3,6 +3,7 @@ realm: oldcity
 webserver:
   network: "tcp"
   listen: "0.0.0.0:3000"
+  cookie_name: "nginx_ldap_auth"
   session_secret: "secret"
   session_max_age: "30m"
 

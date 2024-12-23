@@ -20,5 +20,5 @@ func UseCookieSession(router *gin.Engine, cfg config.WebServer) {
 		Secure:   !gin.IsDebugging(),
 		SameSite: http.SameSiteStrictMode,
 	})
-	router.Use(sessions.Sessions("PHPSESSID", sessionStore))
+	router.Use(sessions.Sessions(cfg.CookieName, sessionStore))
 }

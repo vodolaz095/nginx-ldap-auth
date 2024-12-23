@@ -12,6 +12,7 @@ import (
 type WebServer struct {
 	Network                string        `yaml:"network"`
 	Listen                 string        `yaml:"listen"`
+	CookieName             string        `yaml:"cookie_name"`
 	SessionSecret          string        `yaml:"session_secret"`
 	SessionMaxAgeInSeconds time.Duration `yaml:"session_max_age"`
 }

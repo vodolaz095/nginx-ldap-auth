@@ -9,18 +9,19 @@ import (
 	"github.com/vodolaz095/ldap4gin"
 )
 
-func (api *API) injectWhoAmI() {
-	api.engine.GET("/auth/whoami", func(c *gin.Context) {
+func (api *API) injectSession() {
+	api.engine.GET("/auth/session", func(c *gin.Context) {
 		user, err := api.Authenticator.Extract(c)
 		if err != nil {
 			if errors.Is(err, ldap4gin.ErrUnauthorized) {
-				c.String(http.StatusUnauthorized, "anomimus")
+				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
-			log.Error().Err(err).Msgf("Error rendering whoami: %s", err)
+			log.Error().Err(err).Msgf("Authenticator error: %S", err)
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
+		log.Debug().Msgf("Welcome, %s!", user.String())
 		c.String(http.StatusOK, "Welcome, %s!", user.String())
 	})
 }

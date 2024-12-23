@@ -68,10 +68,11 @@ func (api *API) StartAuthAPI(ctx context.Context, cfg config.WebServer) (err err
 	})
 
 	// HTTP request handlers
+	// basic authorization routes
 	api.injectBasicAuth()
-	api.injecSessionAuth()
-	api.injectLogout()
-	api.injectWhoAmI()
+	// http session based routes
+	api.injectLoginForm()
+	api.injectSession()
 
 	// starting listener
 	listener, err := net.Listen(cfg.Network, cfg.Listen)

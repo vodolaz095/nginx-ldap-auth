@@ -12,34 +12,26 @@ import (
 
 func (api *API) injectBasicAuth() {
 	api.engine.GET("/auth/basic", func(c *gin.Context) {
-		user, err := api.Authenticator.Extract(c)
+		var err error
+		username, password, ok := c.Request.BasicAuth()
+		if !ok {
+			c.Header("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%q\", charset=\"UTF-8\"", api.Realm))
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		// TODO - in memory cache!
+		err = api.Authenticator.Authorize(c, username, password)
 		if err != nil {
-			if errors.Is(err, ldap4gin.ErrUnauthorized) {
-				username, password, ok := c.Request.BasicAuth()
-				if !ok {
-					c.Header("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%q\", charset=\"UTF-8\"", api.Realm))
-					c.AbortWithStatus(http.StatusUnauthorized)
-					return
-				}
-				err = api.Authenticator.Authorize(c, username, password)
-				if err != nil {
-					if errors.Is(err, ldap4gin.ErrInvalidCredentials) {
-						c.Header("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%q\", charset=\"UTF-8\"", api.Realm))
-						c.AbortWithStatus(http.StatusUnauthorized)
-						return
-					}
-					log.Error().Err(err).Msgf("Error checking username and password from basic challenge: %s", err)
-					c.AbortWithError(http.StatusInternalServerError, err)
-					return
-				}
-				c.String(http.StatusOK, "Welcome, %s!", username)
+			if errors.Is(err, ldap4gin.ErrInvalidCredentials) {
+				c.Header("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%q\", charset=\"UTF-8\"", api.Realm))
+				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
-			log.Error().Err(err).Msgf("Authenticator error: %S", err)
+			log.Error().Err(err).Msgf("Error checking username and password from basic challenge: %s", err)
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		log.Debug().Msgf("Welcome, %s!", user.String())
-		c.String(http.StatusOK, "Welcome, %s!", user.String())
+		c.String(http.StatusOK, "Welcome, %s!", username)
+		return
 	})
 }
