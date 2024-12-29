@@ -6,7 +6,7 @@ webserver:
   cookie_name: "nginx_ldap_auth"
   session_secret: "secret"
   session_max_age: "30m"
-  profile_prefix: "/auth"
+  profile_prefix: /auth
   subrequest_basic: /subrequest/basic
   subrequest_session: /subrequest/session
 

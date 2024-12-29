@@ -90,7 +90,7 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msgf("error pinging authenticator: %s", err)
 	}
-
+	log.Debug().Msgf("Starting profile under %s prefix...", cfg.WebServer.ProfilePrefix)
 	api := endpoints.API{
 		Authenticator:                         authenticator,
 		Realm:                                 cfg.Realm,

@@ -36,8 +36,10 @@ func (api *API) injectLoginForm() {
 		if err != nil {
 			if errors.Is(err, ldap4gin.ErrUnauthorized) {
 				c.HTML(http.StatusUnauthorized, "login.html", gin.H{
-					"title": "Authorization is required",
-					"csrf":  csrf.(string),
+					"title":         "Authorization is required",
+					"csrf":          csrf.(string),
+					"realm":         api.Realm,
+					"profilePrefix": template.HTMLAttr(api.ProfilePrefix),
 				})
 				return
 			}
