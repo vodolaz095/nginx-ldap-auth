@@ -3,6 +3,7 @@ package endpoints
 import (
 	"context"
 	"errors"
+	"html/template"
 	"strings"
 
 	"github.com/vodolaz095/ldap4gin"
@@ -46,4 +47,34 @@ func (api *API) checkPermissions(ctx context.Context, hostname, path string, use
 	}
 	span.AddEvent("User " + user.String() + " resticted hostname=" + hostname + " with path=" + path)
 	return errAccessDenied
+}
+
+func (api *API) listAllowed(hostname string, user *ldap4gin.User) (ret []template.HTMLAttr) {
+	var uidMatched, groupMatched bool
+	for i := range api.Permissions {
+		if api.Permissions[i].Host != hostname {
+			continue
+		}
+		if len(api.Permissions[i].UIDs) == 0 {
+			uidMatched = true
+		}
+		for j := range api.Permissions[i].UIDs {
+			if user.UID == api.Permissions[i].UIDs[j] {
+				uidMatched = true
+			}
+		}
+		if len(api.Permissions[i].GIDs) == 0 {
+			groupMatched = true
+		}
+		for k := range api.Permissions[i].GIDs {
+			if user.HasGroupByName(api.Permissions[i].GIDs[k]) {
+				groupMatched = true
+			}
+		}
+		if uidMatched && groupMatched {
+			// https://stackoverflow.com/questions/38037615/prevent-escaping-forward-slashes-in-templates
+			ret = append(ret, template.HTMLAttr(strings.TrimPrefix(api.Permissions[i].Prefix, "/")))
+		}
+	}
+	return ret
 }

@@ -96,6 +96,7 @@ func main() {
 		Realm:                                 cfg.Realm,
 		SubrequestPathForBasicAuthorization:   cfg.WebServer.SubrequestPathForBasicAuthorization,
 		SubrequestPathForSessionAuthorization: cfg.WebServer.SubrequestPathForSessionAuthorization,
+		ProfilePrefix:                         cfg.WebServer.ProfilePrefix,
 		Permissions:                           cfg.Permission,
 	}
 	hc_supported, err := healthcheck.Ready()

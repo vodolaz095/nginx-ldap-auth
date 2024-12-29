@@ -6,6 +6,7 @@ webserver:
   cookie_name: "nginx_ldap_auth"
   session_secret: "secret"
   session_max_age: "30m"
+  profile_prefix: "/auth"
   subrequest_basic: /subrequest/basic
   subrequest_session: /subrequest/session
 
@@ -24,13 +25,13 @@ tracing:
   ratio: 1
 
 permissions:
-  - host: nginx_ldap_auth
+  - host: localhost:3000
     prefix: /basic
     uids:
       - abeloy
     gids:
       - test
-  - host: nginx_ldap_auth
+  - host: localhost:3000
     prefix: /private
     uids:
       - abeloy

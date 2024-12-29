@@ -14,6 +14,7 @@ type WebServer struct {
 	Listen                                string        `yaml:"listen" validate:"required"`
 	SubrequestPathForBasicAuthorization   string        `yaml:"subrequest_basic" validate:"required"`
 	SubrequestPathForSessionAuthorization string        `yaml:"subrequest_session" validate:"required"`
+	ProfilePrefix                         string        `yaml:"profile_prefix" validate:"required"`
 	CookieName                            string        `yaml:"cookie_name" validate:"required"`
 	SessionSecret                         string        `yaml:"session_secret" validate:"required"`
 	SessionMaxAgeInSeconds                time.Duration `yaml:"session_max_age"`

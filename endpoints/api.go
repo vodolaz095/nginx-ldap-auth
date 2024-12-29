@@ -23,6 +23,7 @@ type API struct {
 	Realm                                 string
 	SubrequestPathForBasicAuthorization   string
 	SubrequestPathForSessionAuthorization string
+	ProfilePrefix                         string
 	Permissions                           []config.Permission
 	engine                                *gin.Engine
 }
