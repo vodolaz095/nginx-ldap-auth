@@ -10,11 +10,13 @@ import (
 )
 
 type WebServer struct {
-	Network                string        `yaml:"network" validate:"required"`
-	Listen                 string        `yaml:"listen" validate:"required"`
-	CookieName             string        `yaml:"cookie_name" validate:"required"`
-	SessionSecret          string        `yaml:"session_secret" validate:"required"`
-	SessionMaxAgeInSeconds time.Duration `yaml:"session_max_age"`
+	Network                               string        `yaml:"network" validate:"required"`
+	Listen                                string        `yaml:"listen" validate:"required"`
+	SubrequestPathForBasicAuthorization   string        `yaml:"subrequest_basic" validate:"required"`
+	SubrequestPathForSessionAuthorization string        `yaml:"subrequest_session" validate:"required"`
+	CookieName                            string        `yaml:"cookie_name" validate:"required"`
+	SessionSecret                         string        `yaml:"session_secret" validate:"required"`
+	SessionMaxAgeInSeconds                time.Duration `yaml:"session_max_age"`
 }
 
 type Authenticator struct {
@@ -45,6 +47,7 @@ type Cfg struct {
 	Log           zerologger.Log `yaml:"log"`
 	Tracing       tracing.Config `yaml:"tracing"`
 	Realm         string         `yaml:"realm"`
+	Permission    []Permission   `yaml:"permissions"`
 }
 
 func (c *Cfg) Dump() ([]byte, error) {

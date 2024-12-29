@@ -5,9 +5,11 @@ import (
 	"crypto/tls"
 	"flag"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog/log"
 	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
+	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/vodolaz095/ldap4gin"
@@ -51,6 +53,7 @@ func main() {
 	err = tracing.Configure(cfg.Tracing,
 		semconv.ServiceName("nginx-ldap-auth"),
 		semconv.ServiceVersion(Version),
+		semconv.DeploymentEnvironment(cfg.Realm),
 	)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("error configuring tracing: %s", err)
@@ -58,7 +61,7 @@ func main() {
 
 	// set openldap authenticator
 	authenticator, err := ldap4gin.New(&ldap4gin.Options{
-		Debug:            true,
+		Debug:            gin.IsDebugging(),
 		ConnectionString: cfg.Authenticator.ConnectionString,
 		ReadonlyDN:       cfg.Authenticator.ReadonlyDN,
 		ReadonlyPasswd:   cfg.Authenticator.ReadonlyPasswd,
@@ -70,6 +73,14 @@ func main() {
 		ExtractGroups: true,
 		GroupsOU:      cfg.Authenticator.GroupsOU,
 		TTL:           cfg.Authenticator.TTL,
+		LogDebugFunc: func(ctx context.Context, format string, data ...any) {
+			span := trace.SpanFromContext(ctx)
+			logger := log.Debug()
+			if span.SpanContext().HasTraceID() {
+				logger = logger.Str("trace_id", span.SpanContext().TraceID().String())
+			}
+			logger.Msgf(format, data...)
+		},
 	})
 	if err != nil {
 		log.Fatal().Err(err).Msgf("error configuring authenticator: %s", err)
@@ -81,8 +92,11 @@ func main() {
 	}
 
 	api := endpoints.API{
-		Authenticator: authenticator,
-		Realm:         cfg.Realm,
+		Authenticator:                         authenticator,
+		Realm:                                 cfg.Realm,
+		SubrequestPathForBasicAuthorization:   cfg.WebServer.SubrequestPathForBasicAuthorization,
+		SubrequestPathForSessionAuthorization: cfg.WebServer.SubrequestPathForSessionAuthorization,
+		Permissions:                           cfg.Permission,
 	}
 	hc_supported, err := healthcheck.Ready()
 	if err != nil {

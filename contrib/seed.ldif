@@ -37,7 +37,9 @@ objectclass: organizationalUnit
 ou: people
 
 dn: uid=abeloy,ou=people,dc=vodolaz095,dc=ru
+uid: abeloy
 cn: Alexander Beloy
+uidnumber: 1000
 gidnumber: 1000
 givenname: Alexander
 homedirectory: /home/abeloy
@@ -48,8 +50,6 @@ objectclass: inetOrgPerson
 objectclass: organizationalPerson
 objectclass: person
 sn: Beloy
-uid: abeloy
-uidnumber: 10000
 userpassword: {SSHA}M1Um0cvQBqIRDjHk8beDv07kky5jQ2VB
 
 dn: cn=readonly,dc=vodolaz095,dc=ru

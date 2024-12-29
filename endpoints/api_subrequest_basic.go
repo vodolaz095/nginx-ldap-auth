@@ -11,7 +11,13 @@ import (
 )
 
 func (api *API) injectBasicAuth() {
-	api.engine.GET("/subrequest/basic", func(c *gin.Context) {
+	if api.SubrequestPathForBasicAuthorization == "" {
+		log.Debug().Msgf("subrequest for basic authorization is disabled")
+		return
+	}
+	log.Debug().Msgf("subrequest for basic authorization is enabled for %s", api.SubrequestPathForBasicAuthorization)
+
+	api.engine.GET(api.SubrequestPathForBasicAuthorization, func(c *gin.Context) {
 		var err error
 		username, password, ok := c.Request.BasicAuth()
 		if !ok {
@@ -31,6 +37,23 @@ func (api *API) injectBasicAuth() {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
+		user, err := api.Authenticator.Extract(c)
+		if err != nil {
+			log.Error().Err(err).Msgf("Extracting user from metadata: %s", err)
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		err = api.checkPermissions(c.Request.Context(), c.Request.Host, c.Request.RequestURI, user)
+		if err != nil {
+			if errors.Is(err, errAccessDenied) {
+				c.String(http.StatusForbidden, "Forbidden: %s", err)
+				return
+			}
+			log.Error().Err(err).Msgf("checking permissions: %s", err)
+			return
+		}
+
 		c.String(http.StatusOK, "Welcome, %s!", username)
 		return
 	})

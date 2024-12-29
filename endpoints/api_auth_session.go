@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/vodolaz095/ldap4gin"
 	"github.com/vodolaz095/nginx-ldap-auth/middlewares"
+	"github.com/vodolaz095/nginx-ldap-auth/public"
 )
 
 // loginForm is used for authorization via username+password
@@ -19,6 +20,12 @@ type loginForm struct {
 }
 
 func (api *API) injectLoginForm() {
+	// load static files
+	fs := http.FS(public.Assets)
+	api.engine.StaticFS("/auth/assets/", fs)
+	api.engine.GET("/auth/favicon.ico", func(c *gin.Context) {
+		c.FileFromFS("favicon.ico", fs)
+	})
 	api.engine.GET("/auth/login", func(c *gin.Context) {
 		csrf, ok := c.Get("csrf")
 		if !ok {

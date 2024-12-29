@@ -11,6 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/vodolaz095/ldap4gin"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
+	"go.opentelemetry.io/otel/trace"
 
 	"github.com/vodolaz095/nginx-ldap-auth/config"
 	"github.com/vodolaz095/nginx-ldap-auth/middlewares"
@@ -18,9 +19,12 @@ import (
 )
 
 type API struct {
-	Authenticator *ldap4gin.Authenticator
-	Realm         string
-	engine        *gin.Engine
+	Authenticator                         *ldap4gin.Authenticator
+	Realm                                 string
+	SubrequestPathForBasicAuthorization   string
+	SubrequestPathForSessionAuthorization string
+	engine                                *gin.Engine
+	Permissions                           []config.Permission
 }
 
 func (api *API) StartAuthAPI(ctx context.Context, cfg config.WebServer) (err error) {
@@ -42,8 +46,12 @@ func (api *API) StartAuthAPI(ctx context.Context, cfg config.WebServer) (err err
 	middlewares.UseCSRF(api.engine)
 
 	api.engine.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-		// todo TRACE-ID
-		log.Debug().Msgf("[%s] - \"%s %s %s\" -> code=%d lat=%s size=%d / \"%s\"",
+		span := trace.SpanContextFromContext(param.Request.Context())
+		logger := log.Debug()
+		if span.HasTraceID() {
+			logger = logger.Str("trace_id", span.TraceID().String())
+		}
+		logger.Msgf("[%s] - \"%s %s %s\" -> code=%d lat=%s size=%d / \"%s\"",
 			param.ClientIP,
 			param.Method,
 			param.Path,
@@ -72,7 +80,7 @@ func (api *API) StartAuthAPI(ctx context.Context, cfg config.WebServer) (err err
 	api.injectBasicAuth()
 	// http session based routes
 	api.injectLoginForm()
-	api.injectSession()
+	api.injectSessionSubrequest()
 
 	// starting listener
 	listener, err := net.Listen(cfg.Network, cfg.Listen)
