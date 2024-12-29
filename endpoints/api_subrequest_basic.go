@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"github.com/vodolaz095/ldap4gin"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func (api *API) injectBasicAuth() {
@@ -19,6 +21,16 @@ func (api *API) injectBasicAuth() {
 
 	api.engine.GET(api.SubrequestPathForBasicAuthorization, func(c *gin.Context) {
 		var err error
+		span := trace.SpanFromContext(c.Request.Context())
+		span.SetName("subrequest_session")
+		origin := c.GetHeader("X-Original-URI")
+		if origin != "" {
+			span.SetAttributes(attribute.String("original_uri", origin))
+		} else {
+			span.AddEvent("header X-Original-URI is missing")
+			c.String(http.StatusBadRequest, "header X-Original-URI is missing")
+			return
+		}
 		username, password, ok := c.Request.BasicAuth()
 		if !ok {
 			c.Header("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%q\", charset=\"UTF-8\"", api.Realm))
@@ -44,7 +56,7 @@ func (api *API) injectBasicAuth() {
 			return
 		}
 
-		err = api.checkPermissions(c.Request.Context(), c.Request.Host, c.Request.RequestURI, user)
+		err = api.checkPermissions(c.Request.Context(), c.Request.Host, origin, user)
 		if err != nil {
 			if errors.Is(err, errAccessDenied) {
 				c.String(http.StatusForbidden, "Forbidden: %s", err)
@@ -53,7 +65,10 @@ func (api *API) injectBasicAuth() {
 			log.Error().Err(err).Msgf("checking permissions: %s", err)
 			return
 		}
-
+		log.Debug().
+			Str("trace_id", span.SpanContext().TraceID().String()).
+			Msgf("User %s is allowed to %s on hostname %s",
+				user.String(), origin, c.Request.Host)
 		c.String(http.StatusOK, "Welcome, %s!", username)
 		return
 	})

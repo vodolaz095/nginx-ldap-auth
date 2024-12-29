@@ -3,6 +3,7 @@ version: "3.11"
 volumes:
   ldap:
   slapdd:
+  gomodcache:
 
 networks:
   nginx_ldap_auth_network:
@@ -80,12 +81,15 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile_development
+    ports:
+      - "3003:3000"
     volumes:
       - type: bind
-        source: ./contrib/config.docker.yaml
-        target: /etc/config.docker.yaml
+        source: ./
+        target: /app
         read_only: true
         bind:
           selinux: Z
+      - gomodcache:/go/pkg/mod
     networks:
       - nginx_ldap_auth_network

@@ -17,6 +17,7 @@ func (api *API) checkPermissions(ctx context.Context, hostname, path string, use
 	span.AddEvent("Checking hostname " + hostname + " with path " + path)
 	for i := range api.Permissions {
 		if api.Permissions[i].Host == hostname && strings.HasPrefix(path, api.Permissions[i].Prefix) {
+			span.AddEvent("Permission found for hostname=" + hostname + " with path=" + path)
 			if len(api.Permissions[i].UIDs) == 0 {
 				uidMatched = true
 			}
@@ -34,10 +35,11 @@ func (api *API) checkPermissions(ctx context.Context, hostname, path string, use
 				}
 			}
 			if uidMatched && groupMatched {
-				span.AddEvent("user allowed")
+				span.AddEvent("User " + user.String() + " is allowed for hostname=" + hostname + " with path=" + path)
 				return nil
 			}
 		}
 	}
+	span.AddEvent("User " + user.String() + " resticted hostname=" + hostname + " with path=" + path)
 	return errAccessDenied
 }

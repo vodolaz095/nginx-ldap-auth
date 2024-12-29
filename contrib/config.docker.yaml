@@ -23,6 +23,20 @@ tracing:
   endpoint: "jaeger:6831"
   ratio: 1
 
+permissions:
+  - host: nginx_ldap_auth
+    prefix: /basic
+    uids:
+      - abeloy
+    gids:
+      - test
+  - host: nginx_ldap_auth
+    prefix: /private
+    uids:
+      - abeloy
+    gids:
+      - test
+
 log:
   level: "trace"
   to_journald: false

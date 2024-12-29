@@ -23,8 +23,8 @@ type API struct {
 	Realm                                 string
 	SubrequestPathForBasicAuthorization   string
 	SubrequestPathForSessionAuthorization string
-	engine                                *gin.Engine
 	Permissions                           []config.Permission
+	engine                                *gin.Engine
 }
 
 func (api *API) StartAuthAPI(ctx context.Context, cfg config.WebServer) (err error) {

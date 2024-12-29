@@ -1,12 +1,6 @@
 FROM mirror.gcr.io/golang:1.23.2
 
-RUN mkdir -p /app
+VOLUME /app
 WORKDIR /app
-ADD ./go.sum /app/go.sum
-ADD ./go.mod /app/go.mod
-RUN go mod download
-RUN go mod verify
 
-ADD ./ /app
-
-ENTRYPOINT ["go", "run", "main.go", "/etc/config.docker.yaml"]
+ENTRYPOINT ["go", "run", "main.go", "/app/contrib/config.docker.yaml"]
