@@ -132,6 +132,8 @@ github.com/vodolaz095/ldap4gin v1.5.1 h1:k23wYgNV64GBOdfEYeCb2Ak4rdMncMcnvu3mPK5
 github.com/vodolaz095/ldap4gin v1.5.1/go.mod h1:Z831DOYMZtFOeN0k6CC/dB79+0CfI7Y4I3elq5jcoxA=
 github.com/vodolaz095/ldap4gin v1.5.2 h1:w7+Q2E6R3SqMRB/yEBh+FLE4gBx+JA/Q+w7izdDuPtU=
 github.com/vodolaz095/ldap4gin v1.5.2/go.mod h1:Kc4rniGQXXItwopg6zYxqCvg2gxONDm1tyvdagx9Jr4=
+github.com/vodolaz095/ldap4gin v1.5.3 h1:Sx88C5Hhjw50aCJqMQNQNZr9fF8iWBPCmU3Qbgte3aM=
+github.com/vodolaz095/ldap4gin v1.5.3/go.mod h1:Kc4rniGQXXItwopg6zYxqCvg2gxONDm1tyvdagx9Jr4=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.opentelemetry.io/auto/sdk v1.1.0 h1:cH53jehLUN6UFLY71z+NDOiNJqDdPRaXzTel0sJySYA=
 go.opentelemetry.io/auto/sdk v1.1.0/go.mod h1:3wSPjt5PWp2RhlCcmmOial7AvC4DQqZb7a7wCow3W8A=

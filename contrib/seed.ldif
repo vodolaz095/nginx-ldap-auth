@@ -29,6 +29,7 @@ ou: groups
 
 dn: cn=test,ou=groups,dc=vodolaz095,dc=ru
 cn: test
+description: test users
 gidnumber: 1000
 objectclass: posixGroup
 memberUid: abeloy
@@ -39,19 +40,20 @@ ou: people
 
 dn: uid=abeloy,ou=people,dc=vodolaz095,dc=ru
 uid: abeloy
+uidNumber: 1000
+gidNumber: 1000
 cn: Alexander Beloy
-uidnumber: 1000
-gidnumber: 1000
-givenname: Alexander
-homedirectory: /home/abeloy
+givenName: Alexander
+homeDirectory: /home/abeloy
 initials: AB
-loginshell: /bin/bash
-objectclass: posixAccount
-objectclass: inetOrgPerson
-objectclass: organizationalPerson
-objectclass: person
+loginShell: /bin/bash
+objectClass: posixAccount
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
 sn: Beloy
-userpassword: {SSHA}M1Um0cvQBqIRDjHk8beDv07kky5jQ2VB
+title: testUser
+userPassword: {SSHA}M1Um0cvQBqIRDjHk8beDv07kky5jQ2VB
 
 dn: cn=readonly,dc=vodolaz095,dc=ru
 cn: readonly

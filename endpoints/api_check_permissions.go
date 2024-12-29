@@ -19,18 +19,22 @@ func (api *API) checkPermissions(ctx context.Context, hostname, path string, use
 		if api.Permissions[i].Host == hostname && strings.HasPrefix(path, api.Permissions[i].Prefix) {
 			span.AddEvent("Permission found for hostname=" + hostname + " with path=" + path)
 			if len(api.Permissions[i].UIDs) == 0 {
+				span.AddEvent("all UIDs allowed")
 				uidMatched = true
 			}
 			for j := range api.Permissions[i].UIDs {
 				if user.UID == api.Permissions[i].UIDs[j] {
+					span.AddEvent("user has uid " + api.Permissions[i].UIDs[j])
 					uidMatched = true
 				}
 			}
 			if len(api.Permissions[i].GIDs) == 0 {
+				span.AddEvent("all GIDs allowed")
 				groupMatched = true
 			}
 			for k := range api.Permissions[i].GIDs {
-				if user.HasGroupByGID(api.Permissions[i].GIDs[k]) {
+				if user.HasGroupByName(api.Permissions[i].GIDs[k]) {
+					span.AddEvent("user has group " + api.Permissions[i].GIDs[k])
 					groupMatched = true
 				}
 			}

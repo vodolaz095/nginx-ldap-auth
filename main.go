@@ -75,7 +75,7 @@ func main() {
 		TTL:           cfg.Authenticator.TTL,
 		LogDebugFunc: func(ctx context.Context, format string, data ...any) {
 			span := trace.SpanFromContext(ctx)
-			logger := log.Debug()
+			logger := log.Debug().CallerSkipFrame(2)
 			if span.SpanContext().HasTraceID() {
 				logger = logger.Str("trace_id", span.SpanContext().TraceID().String())
 			}
