@@ -3,6 +3,7 @@ package endpoints
 import (
 	"errors"
 	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -49,6 +50,7 @@ func (api *API) injectLoginForm() {
 			"realm":         api.Realm,
 			"placesAllowed": api.listAllowed(c.Request.Host, user),
 			"user":          user,
+			"profilePrefix": template.HTMLAttr(api.ProfilePrefix),
 		})
 	})
 

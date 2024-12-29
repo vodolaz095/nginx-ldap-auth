@@ -8,9 +8,9 @@
 <p>Your are allowed to visit this pathes on this domain:</p>
 <ul>
 {{ range .placesAllowed }}
-<li><a href="/{{ . }}">{{ . }}</a></li>
+<li><a href="/{{ . }}/">{{ . }}</a></li>
 {{ end }}
 </ul>
-<p><a href="/auth/logout">Logout</a></p>
+<p><a href="{{ .profilePrefix }}/logout">Logout</a></p>
 {{ template "footer.html" . }}
 {{ end }}
