@@ -4,7 +4,7 @@
 {{ range .flashes }}
 <h3>{{ . }}</h3>
 {{ end }}
-<h1>Wellcome, {{ .user }}</h1>
+<h3>Wellcome, {{ .user }}</h3>
 <p>Your are allowed to visit this pathes on this domain:</p>
 <ul>
 {{ range .placesAllowed }}

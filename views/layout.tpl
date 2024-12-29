@@ -11,7 +11,7 @@
 {{end}}
 
 {{define "footer.html"}}
-<p><a href="/">Back</p>
+<p><a href="/">Back</a></p>
 <script type="application/javascript" src="{{ .profilePrefix }}/assets/script.js"></script>
 </body>
 </html>
