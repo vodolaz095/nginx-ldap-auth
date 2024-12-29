@@ -8,6 +8,11 @@
   <link href="{{ .profilePrefix }}/assets/style.css" rel="stylesheet">
 </head>
 <body>
+<h1>{{.title}}</h1>
+<hr/>
+{{ range .flashes }}
+<p>{{ . }}</h3>
+{{ end }}
 {{end}}
 
 {{define "footer.html"}}

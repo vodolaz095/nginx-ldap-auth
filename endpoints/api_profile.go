@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 	"github.com/vodolaz095/ldap4gin"
@@ -28,6 +29,10 @@ func (api *API) injectLoginForm() {
 		c.FileFromFS("favicon.ico", fs)
 	})
 	api.engine.GET(api.ProfilePrefix+"/", func(c *gin.Context) {
+		session := sessions.Default(c)
+		flashes := session.Flashes()
+		defer session.Save()
+
 		csrf, ok := c.Get("csrf")
 		if !ok {
 			csrf = "error!"
@@ -39,6 +44,7 @@ func (api *API) injectLoginForm() {
 					"title":         "Authorization is required",
 					"csrf":          csrf.(string),
 					"realm":         api.Realm,
+					"flashes":       flashes,
 					"profilePrefix": template.HTMLAttr(api.ProfilePrefix),
 				})
 				return
@@ -52,6 +58,7 @@ func (api *API) injectLoginForm() {
 			"realm":         api.Realm,
 			"placesAllowed": api.listAllowed(c.Request.Host, user),
 			"user":          user,
+			"flashes":       flashes,
 			"profilePrefix": template.HTMLAttr(api.ProfilePrefix),
 		})
 	})
@@ -67,6 +74,9 @@ func (api *API) injectLoginForm() {
 
 	api.engine.Use(middlewares.CheckCSRF)
 	api.engine.POST(api.ProfilePrefix+"/login", func(c *gin.Context) {
+		session := sessions.Default(c)
+		defer session.Save()
+
 		var bdy loginForm
 		err := c.Bind(&bdy)
 		if err != nil {
@@ -75,9 +85,10 @@ func (api *API) injectLoginForm() {
 		}
 		err = api.Authenticator.Authorize(c, bdy.Username, bdy.Password)
 		if err != nil {
-			log.Error().Err(err).Msgf("Error rendering whoami: %s", err)
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
+			session.AddFlash(fmt.Sprintf("Authorization error: %s", err.Error()))
+			log.Error().Err(err).Msgf("error authorizing %s: %s", bdy.Username, err)
+		} else {
+			session.AddFlash(fmt.Sprintf("Welcome, %s!", bdy.Username))
 		}
 		c.Redirect(http.StatusFound, api.ProfilePrefix+"/")
 	})

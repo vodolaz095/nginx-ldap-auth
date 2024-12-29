@@ -1,9 +1,5 @@
 {{ define "login.html" }}
 {{ template "header.html" . }}
-<h1>Authorization required</h1>
-{{ range .flashes }}
-<h3>{{ . }}</h3>
-{{ end }}
 <form action="{{ .profilePrefix }}/login" method="post">
   <input name="_csrf" type="hidden" value="{{ .csrf }}"/>
   <label for="username">Username:</label>
