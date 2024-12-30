@@ -34,6 +34,9 @@ func injectTemplates(r *gin.Engine) (err error) {
 	}
 	f := template.FuncMap{
 		"unescape": unescape,
+		"inc": func(n int) int {
+			return n + 1
+		},
 	}
 	tpl, err := template.New("nginx-ldap-auth").Funcs(f).Parse(templatesAsBytes.String())
 	if err != nil {

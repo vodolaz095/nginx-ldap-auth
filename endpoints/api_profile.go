@@ -54,7 +54,7 @@ func (api *API) injectLoginForm() {
 			return
 		}
 		c.HTML(http.StatusOK, "profile.html", gin.H{
-			"title":         fmt.Sprintf("Welcome, %s!", user.String()),
+			"title":         fmt.Sprintf("Welcome, %s!", user.CommonName),
 			"realm":         api.Realm,
 			"placesAllowed": api.listAllowed(c.Request.Host, user),
 			"user":          user,
