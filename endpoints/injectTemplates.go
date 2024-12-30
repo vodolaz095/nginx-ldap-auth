@@ -10,10 +10,6 @@ import (
 	"github.com/vodolaz095/nginx-ldap-auth/views"
 )
 
-func unescape(s string) template.HTML {
-	return template.HTML(s)
-}
-
 func injectTemplates(r *gin.Engine) (err error) {
 	templatesAsBytes := bytes.NewBufferString("")
 	entries, err := views.Views.ReadDir(".")
@@ -33,7 +29,9 @@ func injectTemplates(r *gin.Engine) (err error) {
 		}
 	}
 	f := template.FuncMap{
-		"unescape": unescape,
+		"unescape": func(s string) template.HTML {
+			return template.HTML(s)
+		},
 		"inc": func(n int) int {
 			return n + 1
 		},
