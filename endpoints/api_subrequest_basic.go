@@ -10,6 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/vodolaz095/ldap4gin"
 	"go.opentelemetry.io/otel/attribute"
+	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -26,6 +27,8 @@ func (api *API) injectBasicAuth() {
 		var ok bool
 		span := trace.SpanFromContext(c.Request.Context())
 		span.SetName("subrequest_basic")
+		span.SetAttributes(semconv.NetHostName(c.Request.Host))
+		span.SetAttributes(semconv.ServerAddress(c.Request.Host))
 		origin := c.GetHeader("X-Original-URI")
 		if origin != "" {
 			span.SetAttributes(attribute.String("original_uri", origin))
