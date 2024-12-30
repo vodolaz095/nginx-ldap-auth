@@ -3,6 +3,7 @@ package endpoints
 import (
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,8 @@ func (api *API) injectBasicAuth() {
 
 	api.engine.GET(api.SubrequestPathForBasicAuthorization, func(c *gin.Context) {
 		var err error
+		var user *ldap4gin.User
+		var ok bool
 		span := trace.SpanFromContext(c.Request.Context())
 		span.SetName("subrequest_session")
 		origin := c.GetHeader("X-Original-URI")
@@ -33,42 +36,68 @@ func (api *API) injectBasicAuth() {
 		}
 		username, password, ok := c.Request.BasicAuth()
 		if !ok {
-			c.Header("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%q\", charset=\"UTF-8\"", api.Realm))
+			c.Header("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%s\", charset=\"UTF-8\"", api.Realm))
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
-		// TODO - in memory cache!
-		err = api.Authenticator.Authorize(c, username, password)
-		if err != nil {
-			if errors.Is(err, ldap4gin.ErrInvalidCredentials) {
-				c.Header("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%q\", charset=\"UTF-8\"", api.Realm))
-				c.AbortWithStatus(http.StatusUnauthorized)
+		logger := log.With().
+			Str("hostname", c.Request.Host).
+			IPAddr("client_ip", net.ParseIP(c.ClientIP())).
+			Str("original_uri", origin).
+			Str("username", username).
+			Str("trace_id", span.SpanContext().TraceID().String()).
+			Logger()
+
+		key := GetMD5Hash(c.Request.Host, username, password)
+		user, ok = api.authCache.Get(key)
+		if !ok {
+			span.AddEvent("cache miss")
+			err = api.Authenticator.Authorize(c, username, password)
+			if err != nil {
+				if errors.Is(err, ldap4gin.ErrInvalidCredentials) {
+					c.Header("WWW-Authenticate", fmt.Sprintf("Basic realm=\"%s\", charset=\"UTF-8\"", api.Realm))
+					c.AbortWithStatus(http.StatusUnauthorized)
+					return
+				}
+				logger.Err(err).
+					Bool("cache_hit", ok).
+					Msgf("Error checking username and password from basic challenge: %s", err)
+				c.AbortWithError(http.StatusInternalServerError, err)
 				return
 			}
-			log.Error().Err(err).Msgf("Error checking username and password from basic challenge: %s", err)
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
+			user, err = api.Authenticator.Extract(c)
+			if err != nil {
+				logger.Err(err).
+					Bool("cache_hit", ok).
+					Msgf("Extracting user from metadata: %s", err)
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+			api.authCache.Add(key, user)
+		} else {
+			span.AddEvent("cache hit")
 		}
-		user, err := api.Authenticator.Extract(c)
-		if err != nil {
-			log.Error().Err(err).Msgf("Extracting user from metadata: %s", err)
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-
 		err = api.checkPermissions(c.Request.Context(), c.Request.Host, origin, user)
 		if err != nil {
 			if errors.Is(err, errAccessDenied) {
 				c.String(http.StatusForbidden, "Forbidden: %s", err)
+				logger.Debug().
+					Bool("cache_hit", ok).
+					Msgf("user %s cannot access %s%s", user.UID, c.Request.Host, origin)
+
 				return
 			}
-			log.Error().Err(err).Msgf("checking permissions: %s", err)
+			logger.Error().Err(err).
+				Bool("cache_hit", ok).
+				Msgf("checking permissions: %s", err)
+
 			return
 		}
-		log.Debug().
-			Str("trace_id", span.SpanContext().TraceID().String()).
+		logger.Debug().
+			Bool("cache_hit", ok).
 			Msgf("User %s is allowed to %s on hostname %s",
 				user.String(), origin, c.Request.Host)
+
 		c.String(http.StatusOK, "Welcome, %s!", username)
 		return
 	})

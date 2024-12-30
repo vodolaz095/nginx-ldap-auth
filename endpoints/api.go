@@ -6,8 +6,10 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hashicorp/golang-lru/v2/expirable"
 	"github.com/rs/zerolog/log"
 	"github.com/vodolaz095/ldap4gin"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
@@ -26,10 +28,16 @@ type API struct {
 	ProfilePrefix                         string
 	Version                               string
 	Permissions                           []config.Permission
+	authCache                             *expirable.LRU[string, *ldap4gin.User]
 	engine                                *gin.Engine
 }
 
+const cacheSize = 128
+const cacheTTL = time.Minute
+
 func (api *API) StartAuthAPI(ctx context.Context, cfg config.WebServer) (err error) {
+	api.authCache = expirable.NewLRU[string, *ldap4gin.User](cacheSize, nil, cacheTTL)
+
 	api.engine = gin.New()
 	api.engine.Use(gin.Recovery())
 
