@@ -21,7 +21,8 @@ import (
 	"github.com/vodolaz095/nginx-ldap-auth/pkg/zerologger"
 )
 
-var Version string = "development"
+var Version = "development"
+var Subversion = ""
 
 func main() {
 	// load config
@@ -59,6 +60,10 @@ func main() {
 		log.Fatal().Err(err).Msgf("error configuring tracing: %s", err)
 	}
 
+	// set release mode
+	if Version != "development" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	// set openldap authenticator
 	authenticator, err := ldap4gin.New(&ldap4gin.Options{
 		Debug:            gin.IsDebugging(),
@@ -98,7 +103,7 @@ func main() {
 		SubrequestPathForSessionAuthorization: cfg.WebServer.SubrequestPathForSessionAuthorization,
 		ProfilePrefix:                         cfg.WebServer.ProfilePrefix,
 		Permissions:                           cfg.Permission,
-		Version:                               Version,
+		Version:                               Version + Subversion,
 	}
 	hc_supported, err := healthcheck.Ready()
 	if err != nil {
