@@ -1,12 +1,13 @@
 {{ define "login.html" }}
 {{ template "header.html" . }}
-<form action="{{ .profilePrefix }}/login" method="post">
-  <input name="_csrf" type="hidden" value="{{ .csrf }}"/>
-  <label for="username">Username:</label>
-  <input id="username" name="username" value="" type="text" placeholder="Svetlana"/>
-  <label for="password">Password:</label>
-  <input id="password" name="password" value="" type="password" placeholder="secret"/>
-  <input type="submit" value="Login">
+<form id="loginForm" class="nla-body" action="{{ .profilePrefix }}/login" method="post">
+  <input type="hidden" name="_csrf" value="{{.csrf}}">
+  <input type="text" name="username" class="nla-body__email" id="username"
+         autocomplete="true" size="128" required placeholder="Username"/>
+  <input type="password" name="password" id="password"
+         class="nla-body__password" autocomplete="off"
+         size="128" required placeholder="Secret"/>
+  <input type="submit" value="Login to {{.realm}}">
   <input type="reset" value="Reset">
 </form>
 {{ template "footer.html" . }}

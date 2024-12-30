@@ -4,20 +4,23 @@
 <head>
   <meta charset="UTF-8">
   <title>{{.title}}</title>
-  <meta name="robots" content="index,follow"/>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link rel="shortcut icon" type="image/x-icon" href="{{ .profilePrefix }}/assets/favicon.ico"/>
+  <link rel="icon" type="image/x-icon" href="{{ .profilePrefix }}/assets/favicon.ico"/>
   <link href="{{ .profilePrefix }}/assets/style.css" rel="stylesheet">
 </head>
 <body>
-<h1>{{.title}}</h1>
-<hr/>
-{{ range .flashes }}
-<p>{{ . }}</h3>
-{{ end }}
+<div class="nla-card">
+  <h1 class="nla-header">{{.title}}</h1>
+  {{ range .flashes }}
+  <p class="error">{{ . }}</p>
+  {{ end }}
 {{end}}
 
 {{define "footer.html"}}
 <p><a href="/">Back</a></p>
 <script type="application/javascript" src="{{ .profilePrefix }}/assets/script.js"></script>
+</div>
 </body>
 </html>
 {{end}}
