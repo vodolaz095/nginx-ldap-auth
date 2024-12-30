@@ -52,6 +52,8 @@ func (api *API) injectBasicAuth() {
 		user, ok = api.authCache.Get(key)
 		if !ok {
 			span.AddEvent("cache miss")
+			span.SetAttributes(attribute.Bool("cache_hit", false))
+
 			err = api.Authenticator.Authorize(c, username, password)
 			if err != nil {
 				if errors.Is(err, ldap4gin.ErrInvalidCredentials) {
@@ -76,6 +78,7 @@ func (api *API) injectBasicAuth() {
 			api.authCache.Add(key, user)
 		} else {
 			span.AddEvent("cache hit")
+			span.SetAttributes(attribute.Bool("cache_hit", true))
 		}
 		err = api.checkPermissions(c.Request.Context(), c.Request.Host, origin, user)
 		if err != nil {
