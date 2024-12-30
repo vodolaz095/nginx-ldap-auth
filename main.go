@@ -98,6 +98,7 @@ func main() {
 		SubrequestPathForSessionAuthorization: cfg.WebServer.SubrequestPathForSessionAuthorization,
 		ProfilePrefix:                         cfg.WebServer.ProfilePrefix,
 		Permissions:                           cfg.Permission,
+		Version:                               Version,
 	}
 	hc_supported, err := healthcheck.Ready()
 	if err != nil {

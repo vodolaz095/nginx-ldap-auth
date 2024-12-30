@@ -46,6 +46,7 @@ func (api *API) injectLoginForm() {
 					"realm":         api.Realm,
 					"flashes":       flashes,
 					"profilePrefix": template.HTMLAttr(api.ProfilePrefix),
+					"version":       api.Version,
 				})
 				return
 			}
@@ -60,6 +61,7 @@ func (api *API) injectLoginForm() {
 			"user":          user,
 			"flashes":       flashes,
 			"profilePrefix": template.HTMLAttr(api.ProfilePrefix),
+			"version":       api.Version,
 		})
 	})
 

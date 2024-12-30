@@ -21,6 +21,9 @@
 <p><a href="/">Main page</a></p>
 <script type="application/javascript" src="{{ .profilePrefix }}/assets/script.js"></script>
 </div>
+<p align="center">&copy;
+  <a href="https://github.com/vodolaz095/nginx-ldap-auth">nginx-ldap-auth:{{.version}}</a>
+</p>
 </body>
 </html>
 {{end}}

@@ -24,6 +24,7 @@ type API struct {
 	SubrequestPathForBasicAuthorization   string
 	SubrequestPathForSessionAuthorization string
 	ProfilePrefix                         string
+	Version                               string
 	Permissions                           []config.Permission
 	engine                                *gin.Engine
 }
