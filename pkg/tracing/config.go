@@ -26,6 +26,9 @@ const defaultTimeout = 10 * time.Second
 var exp *jaeger.Exporter
 
 func Configure(cfg Config, extraAttributes ...attribute.KeyValue) (err error) {
+	if cfg.Ratio == 0 {
+		return nil
+	}
 	parts := strings.Split(cfg.Endpoint, ":")
 	if len(parts) != 2 {
 		return fmt.Errorf("malformed endpoint: %s", cfg.Endpoint)
