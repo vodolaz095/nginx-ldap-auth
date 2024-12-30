@@ -25,7 +25,7 @@ func (api *API) injectBasicAuth() {
 		var user *ldap4gin.User
 		var ok bool
 		span := trace.SpanFromContext(c.Request.Context())
-		span.SetName("subrequest_session")
+		span.SetName("subrequest_basic")
 		origin := c.GetHeader("X-Original-URI")
 		if origin != "" {
 			span.SetAttributes(attribute.String("original_uri", origin))
