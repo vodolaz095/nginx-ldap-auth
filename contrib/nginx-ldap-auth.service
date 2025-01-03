@@ -1,0 +1,73 @@
+[Unit]
+Description=nginx-ldap-auth application
+After=network.target
+Requires=slapd.service
+
+[Service]
+# при запуске сервиса ждём, когда оно оповестит systemd о готовности, если не оповестило, то перезапускаем
+Type=notify
+# перезапускаем при любых ошибках
+Restart=always
+# ждём 3 секунды, прежде чем systemd будет перезапускать сервис - чтобы само себя не дыдоснуло
+RestartSec=3s
+# каждые 30/2=5 секунд проверяем статус сервиса с помощью systemd-watchdog
+WatchdogSec=30s
+# если приложение не выключается, через 3 секунд посылаем SIGKILL
+TimeoutStopSec=3s
+
+User=eda
+Group=eda
+
+WorkingDirectory=/var/lib/eda/
+ExecStart=/usr/bin/nginx-ldap-auth /etc/ldap_auth.yaml
+ExecStartPost=chmod 0666 /var/run/nginx_ldap_auth/nginx_ldap_auth.sock
+
+# Hardening
+# https://gist.github.com/ageis/f5595e59b1cddb1513d1b425a323db04
+
+ProtectSystem=strict
+ReadWritePaths=/var/lib/eda/ /var/run/nginx_ldap_auth/
+ProtectHome=yes
+ProtectControlGroups=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+StateDirectory=eda
+StateDirectoryMode=0700
+RuntimeDirectory=nginx_ldap_auth
+RuntimeDirectoryMode=0755
+PrivateTmp=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+PrivateUsers=yes
+
+IPAddressAllow=localhost
+IPAddressDeny=any
+
+#IPAddressAllow=any
+#IPAddressDeny=
+
+IPAccounting=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+PrivateDevices=yes
+
+NoNewPrivileges=yes
+UMask=0066
+RestrictSUIDSGID=yes
+RemoveIPC=yes
+# not compatible with upx
+MemoryDenyWriteExecute=yes
+
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+SystemCallArchitectures=native
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target
