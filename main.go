@@ -51,7 +51,7 @@ func main() {
 	defer cancel()
 
 	// set tracing
-	err = tracing.ConfigureUDP(cfg.Tracing,
+	err = tracing.Start(cfg.Tracing,
 		semconv.ServiceName("nginx-ldap-auth"),
 		semconv.ServiceVersion(Version),
 		semconv.DeploymentEnvironment(cfg.Realm),

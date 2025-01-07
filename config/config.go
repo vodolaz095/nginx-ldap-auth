@@ -43,12 +43,12 @@ type Authenticator struct {
 }
 
 type Cfg struct {
-	WebServer     WebServer         `yaml:"webserver"`
-	Authenticator Authenticator     `yaml:"authenticator"`
-	Log           zerologger.Log    `yaml:"log"`
-	Tracing       tracing.UDPConfig `yaml:"tracing"`
-	Realm         string            `yaml:"realm"`
-	Permission    []Permission      `yaml:"permissions"`
+	WebServer     WebServer      `yaml:"webserver"`
+	Authenticator Authenticator  `yaml:"authenticator"`
+	Log           zerologger.Log `yaml:"log"`
+	Tracing       tracing.Config `yaml:"tracing"`
+	Realm         string         `yaml:"realm"`
+	Permission    []Permission   `yaml:"permissions"`
 }
 
 func (c *Cfg) Dump() ([]byte, error) {

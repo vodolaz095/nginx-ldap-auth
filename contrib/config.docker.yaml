@@ -21,7 +21,9 @@ authenticator:
   groups_ou: "ou=groups,dc=vodolaz095,dc=ru"
 
 tracing:
-  endpoint: "jaeger:6831"
+  protocol: udp
+  host: jaeger
+  port: 6831
   ratio: 1
 
 permissions:
