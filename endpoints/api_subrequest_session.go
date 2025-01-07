@@ -19,7 +19,7 @@ func (api *API) injectSessionSubrequest() {
 		return
 	}
 	log.Debug().Msgf("session subrequest authorization is enabled for %s", api.SubrequestPathForBasicAuthorization)
-	api.engine.Any(api.SubrequestPathForSessionAuthorization, func(c *gin.Context) {
+	api.engine.GET(api.SubrequestPathForSessionAuthorization, func(c *gin.Context) {
 		span := trace.SpanFromContext(c.Request.Context())
 		span.SetName("subrequest_session")
 		span.SetAttributes(semconv.NetHostName(c.Request.Host))

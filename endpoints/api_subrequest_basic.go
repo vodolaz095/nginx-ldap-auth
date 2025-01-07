@@ -21,7 +21,7 @@ func (api *API) injectBasicAuth() {
 	}
 	log.Debug().Msgf("subrequest for basic authorization is enabled for %s", api.SubrequestPathForBasicAuthorization)
 
-	api.engine.Any(api.SubrequestPathForBasicAuthorization, func(c *gin.Context) {
+	api.engine.GET(api.SubrequestPathForBasicAuthorization, func(c *gin.Context) {
 		var err error
 		var user *ldap4gin.User
 		var ok bool
