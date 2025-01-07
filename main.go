@@ -8,6 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog/log"
+	"github.com/vodolaz095/pkg/healthcheck"
+	"github.com/vodolaz095/pkg/stopper"
+	"github.com/vodolaz095/pkg/tracing"
+	"github.com/vodolaz095/pkg/zerologger"
 	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/sync/errgroup"
@@ -15,10 +19,6 @@ import (
 	"github.com/vodolaz095/ldap4gin"
 	"github.com/vodolaz095/nginx-ldap-auth/config"
 	"github.com/vodolaz095/nginx-ldap-auth/endpoints"
-	"github.com/vodolaz095/nginx-ldap-auth/pkg/healthcheck"
-	"github.com/vodolaz095/nginx-ldap-auth/pkg/stopper"
-	"github.com/vodolaz095/nginx-ldap-auth/pkg/tracing"
-	"github.com/vodolaz095/nginx-ldap-auth/pkg/zerologger"
 )
 
 var Version = "development"
@@ -47,11 +47,11 @@ func main() {
 	zerologger.Configure(cfg.Log)
 
 	// set main application context
-	mainCtx, cancel := stopper.MakeContext(context.Background())
+	mainCtx, cancel := stopper.New()
 	defer cancel()
 
 	// set tracing
-	err = tracing.Configure(cfg.Tracing,
+	err = tracing.ConfigureUDP(cfg.Tracing,
 		semconv.ServiceName("nginx-ldap-auth"),
 		semconv.ServiceVersion(Version),
 		semconv.DeploymentEnvironment(cfg.Realm),

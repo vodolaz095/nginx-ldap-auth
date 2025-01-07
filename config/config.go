@@ -5,8 +5,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/vodolaz095/nginx-ldap-auth/pkg/tracing"
-	"github.com/vodolaz095/nginx-ldap-auth/pkg/zerologger"
+	"github.com/vodolaz095/pkg/tracing"
+	"github.com/vodolaz095/pkg/zerologger"
 )
 
 type WebServer struct {
@@ -43,12 +43,12 @@ type Authenticator struct {
 }
 
 type Cfg struct {
-	WebServer     WebServer      `yaml:"webserver"`
-	Authenticator Authenticator  `yaml:"authenticator"`
-	Log           zerologger.Log `yaml:"log"`
-	Tracing       tracing.Config `yaml:"tracing"`
-	Realm         string         `yaml:"realm"`
-	Permission    []Permission   `yaml:"permissions"`
+	WebServer     WebServer         `yaml:"webserver"`
+	Authenticator Authenticator     `yaml:"authenticator"`
+	Log           zerologger.Log    `yaml:"log"`
+	Tracing       tracing.UDPConfig `yaml:"tracing"`
+	Realm         string            `yaml:"realm"`
+	Permission    []Permission      `yaml:"permissions"`
 }
 
 func (c *Cfg) Dump() ([]byte, error) {
