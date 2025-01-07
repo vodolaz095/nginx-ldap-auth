@@ -13,8 +13,9 @@ services:
     container_name: jaeger
     image: docker.io/jaegertracing/all-in-one:1.37
     ports:
-      - "16686:16686" # webui is listening
-      - "6831:6831/udp" # accepting spans in compact thrift format over udp
+      - "16686:16686/tcp" # webui is listening
+      - "14268:14268/tcp" # accepting spans in compact jaeger thrift format over http
+      - "6831:6831/udp" # accepting spans in compact jaeger thrift format over udp
     networks:
       - nginx_ldap_auth_network
 
