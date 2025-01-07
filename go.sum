@@ -142,6 +142,8 @@ github.com/vodolaz095/pkg v0.0.0-20250107201542-835a58e5b017 h1:AX7Cl3MfNhnH4TYI
 github.com/vodolaz095/pkg v0.0.0-20250107201542-835a58e5b017/go.mod h1:jnjQQTm7LyWB6s1+agg0/ObcpREcC9Zl/6Ibflqgmr8=
 github.com/vodolaz095/pkg v0.0.0-20250107201932-5debc8961b1e h1:l65CeZKE5SE7LJM7lQikKHrdepY28ba1ddzn1MiTQn0=
 github.com/vodolaz095/pkg v0.0.0-20250107201932-5debc8961b1e/go.mod h1:jnjQQTm7LyWB6s1+agg0/ObcpREcC9Zl/6Ibflqgmr8=
+github.com/vodolaz095/pkg v0.0.0-20250107203852-b70c0899d0c0 h1:FDFgvYwRXsZMPdel5/hHQAtB2TZ9hWVI9DCyU0QCV2Y=
+github.com/vodolaz095/pkg v0.0.0-20250107203852-b70c0899d0c0/go.mod h1:jnjQQTm7LyWB6s1+agg0/ObcpREcC9Zl/6Ibflqgmr8=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.opentelemetry.io/auto/sdk v1.1.0 h1:cH53jehLUN6UFLY71z+NDOiNJqDdPRaXzTel0sJySYA=
 go.opentelemetry.io/auto/sdk v1.1.0/go.mod h1:3wSPjt5PWp2RhlCcmmOial7AvC4DQqZb7a7wCow3W8A=
