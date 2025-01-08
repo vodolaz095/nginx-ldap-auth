@@ -61,8 +61,7 @@ func (api *API) StartAuthAPI(ctx context.Context, cfg config.WebServer) (err err
 		if span.HasTraceID() {
 			logger = logger.Str("trace_id", span.TraceID().String())
 		}
-		logger.Msgf("[%s] - \"%s %s %s\" -> code=%d lat=%s size=%d / \"%s\"",
-			param.ClientIP,
+		logger.Msgf("\"%s %s %s\" -> code=%d lat=%s size=%d / \"%s\"",
 			param.Method,
 			param.Path,
 			param.Request.Proto,

@@ -19,7 +19,14 @@ func (api *API) injectSessionSubrequest() {
 		log.Debug().Msgf("session subrequest authorization is disabled")
 		return
 	}
-	log.Debug().Msgf("session subrequest authorization is enabled for %s", api.SubrequestPathForBasicAuthorization)
+	if api.ProfilePrefix == "" {
+		log.Error().Msgf("user profile is disabled! In order to session subrequest to work, " +
+			"config parameter webserver.profile_prefix should be provided and exposed via nginx reverse proxy " +
+			"for users to be able to perform login")
+		return
+	}
+
+	log.Info().Msgf("session subrequest authorization is enabled for %s", api.SubrequestPathForBasicAuthorization)
 	api.engine.GET(api.SubrequestPathForSessionAuthorization, func(c *gin.Context) {
 		span := trace.SpanFromContext(c.Request.Context())
 		span.SetName("subrequest_session")

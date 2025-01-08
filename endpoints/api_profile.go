@@ -22,6 +22,12 @@ type loginForm struct {
 }
 
 func (api *API) injectLoginForm() {
+	if api.ProfilePrefix == "" {
+		log.Debug().Msgf("user profile is disabled")
+		return
+	}
+	log.Info().Msgf("user profile is enabled on %s", api.SubrequestPathForBasicAuthorization)
+
 	// load static files
 	fs := http.FS(public.Assets)
 	api.engine.StaticFS(api.ProfilePrefix+"/assets/", fs)

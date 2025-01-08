@@ -20,7 +20,7 @@ func (api *API) injectBasicAuth() {
 		log.Debug().Msgf("subrequest for basic authorization is disabled")
 		return
 	}
-	log.Debug().Msgf("subrequest for basic authorization is enabled for %s", api.SubrequestPathForBasicAuthorization)
+	log.Info().Msgf("subrequest for basic authorization is enabled for %s", api.SubrequestPathForBasicAuthorization)
 
 	api.engine.GET(api.SubrequestPathForBasicAuthorization, func(c *gin.Context) {
 		var err error

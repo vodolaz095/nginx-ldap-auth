@@ -45,7 +45,8 @@ func main() {
 
 	// set logging
 	zerologger.Configure(cfg.Log)
-
+	log.Info().Msgf("Starting nginx-ldap-auth. Realm: %s. Version: %s. Subversion: %s",
+		cfg.Realm, Version, Subversion)
 	// set main application context
 	mainCtx, cancel := stopper.New()
 	defer cancel()
@@ -95,7 +96,7 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msgf("error pinging authenticator: %s", err)
 	}
-	log.Debug().Msgf("Starting profile under %s prefix...", cfg.WebServer.ProfilePrefix)
+
 	api := endpoints.API{
 		Authenticator:                         authenticator,
 		Realm:                                 cfg.Realm,
@@ -105,6 +106,7 @@ func main() {
 		Permissions:                           cfg.Permission,
 		Version:                               Version + Subversion,
 	}
+
 	hc_supported, err := healthcheck.Ready()
 	if err != nil {
 		log.Fatal().Err(err).Msgf("error connecting to watchdog: %s", err)

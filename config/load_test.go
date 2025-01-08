@@ -8,7 +8,7 @@ import (
 var testConfig Cfg
 
 func TestLoadFromFile(t *testing.T) {
-	cfg, err := LoadFromFile("./../contrib/dashboard.yaml")
+	cfg, err := LoadFromFile("./../contrib/config.docker.yaml")
 	if err != nil {
 		t.Error(err)
 		return
