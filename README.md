@@ -6,7 +6,21 @@ using openldap as backend.
 
 How it works?
 =====================
+NGINX acts as reverse proxy, passing requests from client to upstream. But, before allowing request to pass,
+NGINX makes sub request to `nginx-ldap-auth` service. It is GET request with headers (and cookies) inherited
+from clients request with some extra headers added - namely, the `Host` and `X-Original-URI` with original URI opened
+by client on server. Sub request has body omitted. It is worth notice we can extract a lot of authorization information 
+from headers, including these two bits: 
+- First one is content of `Authorization: Basic ...` header, used in [Basic Authorization Strategy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication).
+  Username and password extracted from `Authorization:` header can be used to perform BIND authorization like explained
+  in this article - https://vodolaz095.ru/nodejs-openldap/.
+- Second one is cookies, being sent by client with every request. We can store encrypted information about users' sessions
+  in them including users identification, roles, email addresses and so on.
+If `nginx-ldap-auth` service responds with 200th status code on sub-request, nginx will pass clients request to backend,
+and if `nginx-ldap-auth` responds with 4xx ones, nginx will restrict access.
 
+So, `nginx-ldap-auth` service runs independently of nginx, allowing it to either pass or restrict clients requests 
+to backend while acting as reverse proxy.
 
 
 
@@ -15,7 +29,7 @@ Example configuration 1 - basis authorization to limit access to subdirectory
 Use case - we serve static files from directory `/srv/www/site/` using nginx, and we want to implement 
 [basic authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) 
 in order to grant access to subdirectory `/srv/www/site/private` for members of `designers` group organization unit and to 
-few other users: `vodolaz095`, `jsmith`, `abeloy`. In this example `nginx-ldap-auth` listens on socket in `/var/run/nginx_ldap_auth`.
+few other users: `user1`, `user2`, `user3`. In this example `nginx-ldap-auth` listens on socket in `/var/run/nginx_ldap_auth`.
 
 Nginx config `/etc/nginx/sites/site.example.org.conf`
 
@@ -84,18 +98,21 @@ authenticator:
   groups_ou: "ou=groups,dc=example,dc=org"
 
 tracing:
-  endpoint: "jaeger.example.org:6831"
-  ratio: 0.01
+  protocol: udp
+  host: jaeger.example.org
+  port: 6831
+  ratio: 0.01 # 1% of spans will be recorded
+
 
 permissions:
   - host: site.example.org # for hostname
-    prefix: /private # in order to access all path under /private, for example /private/image.jpg and so on
+    prefix: /private # in order to access all paths under /private, for example /private/image.jpg and so on
     uids: #  user should have uid from this list 
-      - vodolaz095 # "uid=vodolaz095,ou=people,dc=example,dc=org"
-      - jsmith # "uid=jsmith,ou=people,dc=example,dc=org"
-      - abeloy # "uid=abeloy,ou=people,dc=example,dc=org"
+      - user1 # "uid=user1,ou=people,dc=example,dc=org"
+      - user2 # "uid=user2,ou=people,dc=example,dc=org"
+      - user3 # "uid=user3,ou=people,dc=example,dc=org"
     gids: # or user should be member of this groups
-      - designers # users 
+      - designers # "cn=designers,ou=groups,dc=example,dc=org" 
 
 log:
   level: "info"
@@ -107,7 +124,7 @@ Example configuration 2 - cookie session based authorization
 ==============================================
 Use case - consider you have some backend service lacking any authentication mechanisms, and you want to expose it 
 to your company members. So, they can open login page in browser, provide credentials and then - access backend.
-Same users should be able to access it `vodolaz095`, `jsmith` and`abeloy` - and same user group - `designers`.
+Some users should be able to access it `user1`, `user2` and`user3` - and same user group - `designers`.
 But, in this case `nginx-ldap-auth` is deployed on separate server accessible via http on non standard port 3000.
 So, firstly users visits https://backend.example.org/auth to perform authentication using username and password, and then
 he/she can access backend on https://backend.example.org/ with cookie basic session. 
@@ -225,18 +242,20 @@ authenticator:
   groups_ou: "ou=groups,dc=example,dc=org"
 
 tracing:
-  endpoint: "jaeger.example.org:6831"
-  ratio: 0.01
+  protocol: udp
+  host: jaeger.example.org
+  port: 6831
+  ratio: 0.01 # 1% of spans will be recorded
 
 permissions:
   - host: site.example.org # for hostname
     prefix: /private # in order to access all path under /private, for example /private/image.jpg and so on
     uids: #  user should have uid from this list 
-      - vodolaz095 # "uid=vodolaz095,ou=people,dc=example,dc=org"
-      - jsmith # "uid=jsmith,ou=people,dc=example,dc=org"
-      - abeloy # "uid=abeloy,ou=people,dc=example,dc=org"
+      - user1 # "uid=user1,ou=people,dc=example,dc=org"
+      - user2 # "uid=user2,ou=people,dc=example,dc=org"
+      - user3 # "uid=user3,ou=people,dc=example,dc=org"
     gids: # or user should be member of this groups
-      - designers # users 
+      - designers # "cn=designers,ou=groups,dc=example,dc=org" 
 
 
 log:
@@ -338,7 +357,6 @@ nginx-ldap-auth config
 
 ```yaml
 
-
 realm: oldcity
 
 webserver:
@@ -362,28 +380,44 @@ authenticator:
   groups_ou: "ou=groups,dc=example,dc=org"
 
 tracing:
-  endpoint: "jaeger:6831"
-  ratio: 1
+  protocol: udp
+  host: jaeger.example.org
+  port: 6831
+  ratio: 0.01 # 1% of spans will be recorded
 
 permissions:
   - host: files.example.org
     prefix: /basic # in order to access all path under /basic, for example /basic/image.jpg and so on
     uids: #  user should have uid from this list 
-      - vodolaz095 # "uid=vodolaz095,ou=people,dc=example,dc=org"
-      - jsmith # "uid=jsmith,ou=people,dc=example,dc=org"
-      - abeloy # "uid=abeloy,ou=people,dc=example,dc=org"
+      - user1 # "uid=user1,ou=people,dc=example,dc=org"
+      - user2 # "uid=user2,ou=people,dc=example,dc=org"
+      - user3 # "uid=user3,ou=people,dc=example,dc=org"
     gids: # or user should be member of this groups
-      - designers # users 
+      - designers # "cn=designers,ou=groups,dc=example,dc=org" 
+
   - host: files.example.org
     prefix: /private # in order to access all path under /private, for example /private/image.jpg and so on
-    uids: #  user has uid from this list 
-      - vodolaz095 # "uid=vodolaz095,ou=people,dc=example,dc=org"
-      - jsmith # "uid=jsmith,ou=people,dc=example,dc=org"
-      - abeloy # "uid=abeloy,ou=people,dc=example,dc=org"
-    gids: # or user has be member of this groups
-      - designers # users 
+    uids: #  user should have uid from this list 
+      - user1 # "uid=user1,ou=people,dc=example,dc=org"
+      - user2 # "uid=user2,ou=people,dc=example,dc=org"
+      - user3 # "uid=user3,ou=people,dc=example,dc=org"
+    gids: # or user should be member of this groups
+      - designers # "cn=designers,ou=groups,dc=example,dc=org" 
+
 log:
   level: "trace"
   to_journald: false
 
 ```
+
+Tracing options
+=============================
+Tracing options are explained here
+https://github.com/vodolaz095/pkg/blob/master/tracing/all.go
+
+
+Logging options
+=============================
+Logging options are explained here
+https://github.com/vodolaz095/pkg/blob/master/zerologger/config.go
+In general, `info` level is ok for production, while `debug` can help fine tune and debug.
