@@ -105,5 +105,5 @@ func (api *API) StartAuthAPI(ctx context.Context, cfg config.WebServer) (err err
 	if strings.Contains(err.Error(), "use of closed network connection") {
 		return nil
 	}
-	return nil
+	return fmt.Errorf("error startung listener: %w", err)
 }
