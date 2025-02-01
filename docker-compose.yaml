@@ -34,12 +34,6 @@ services:
     volumes:
       - ldap:/var/lib/ldap
       - slapdd:/etc/ldap/slapd.d
-      - type: volume
-        source: ./ldif
-        target: /container/service/slapd/assets/config/bootstrap/ldif/custom
-        read_only: true
-        volume:
-          nocopy: false
     ports:
       - "1389:389"
       - "1636:636"
