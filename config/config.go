@@ -18,6 +18,7 @@ type WebServer struct {
 	CookieName                            string        `yaml:"cookie_name" validate:"required"`
 	SessionSecret                         string        `yaml:"session_secret" validate:"required"`
 	SessionMaxAgeInSeconds                time.Duration `yaml:"session_max_age"`
+	TrustedProxies                        []string      `yaml:"trusted_proxies"`
 }
 
 type Authenticator struct {

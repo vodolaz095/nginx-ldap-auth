@@ -15,19 +15,53 @@ gidnumber: 1000
 objectclass: posixGroup
 memberUid: abeloy
 
-dn: uid=abeloy,ou=people,dc=vodolaz095,dc=ru
-uid: abeloy
-uidNumber: 1000
-gidNumber: 1000
-cn: Alexander Beloy
-givenName: Alexander
-homeDirectory: /home/abeloy
+dn: uid=user1,ou=people,dc=vodolaz095,dc=ru"
+uid: user1
+uidNumber: 1001
+gidNumber: 1001
+cn: Test User 1
+givenName: Test User 1
+homeDirectory: /home/user1
 initials: AB
 loginShell: /bin/bash
 objectClass: posixAccount
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
-sn: Beloy
+sn: User1
+title: testUser
+userPassword: {SSHA}M1Um0cvQBqIRDjHk8beDv07kky5jQ2VB
+
+dn: uid=user2,ou=people,dc=vodolaz095,dc=ru"
+uid: user2
+uidNumber: 1002
+gidNumber: 1002
+cn: Test User 2
+givenName: Test User 2
+homeDirectory: /home/user2
+initials: AB
+loginShell: /bin/bash
+objectClass: posixAccount
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+sn: User2
+title: testUser
+userPassword: {SSHA}M1Um0cvQBqIRDjHk8beDv07kky5jQ2VB
+
+dn: uid=user3,ou=people,dc=vodolaz095,dc=ru"
+uid: user3
+uidNumber: 1003
+gidNumber: 1003
+cn: Test User 3
+givenName: Test User 3
+homeDirectory: /home/user3
+initials: AB
+loginShell: /bin/bash
+objectClass: posixAccount
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+sn: User3
 title: testUser
 userPassword: {SSHA}M1Um0cvQBqIRDjHk8beDv07kky5jQ2VB

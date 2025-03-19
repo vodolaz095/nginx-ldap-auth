@@ -40,7 +40,10 @@ func (api *API) StartAuthAPI(ctx context.Context, cfg config.WebServer) (err err
 
 	api.engine = gin.New()
 	api.engine.Use(gin.Recovery())
-
+	err = api.engine.SetTrustedProxies(cfg.TrustedProxies)
+	if err != nil {
+		return fmt.Errorf("error trusting proxies: %w", err)
+	}
 	err = injectTemplates(api.engine)
 	if err != nil {
 		return fmt.Errorf("error injecting templates: %w", err)
