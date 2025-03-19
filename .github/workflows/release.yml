@@ -51,7 +51,7 @@ jobs:
           GOOS: windows
           CGO_ENABLED: 0
           GOARCH: amd64
-        run: go build -ldflags "-X main.Version=${{ github.sha }}" -o build/dashboard.exe main.go
+        run: go build -ldflags "-X main.Version=${{ github.sha }}" -o build/nginx_ldap_auth.exe main.go
 
       - name: build binary for macos on amd64
         env:
@@ -61,7 +61,7 @@ jobs:
         run: go build -ldflags "-X main.Version=${{ github.sha }}" -o build/nginx-ldap-auth_darwin_amd64 main.go
 
       - name: make md5 signature file
-        run: md5sum build/* > build/dashboard.md5
+        run: md5sum build/* > build/nginx-ldap-auth.md5
 
       - name: expose build result
         run: ls -l build/
@@ -75,4 +75,4 @@ jobs:
           generateReleaseNotes: true
           commit: "${{ github.sha }}"
           tag: "${{ github.ref }}"
-          artifacts: "build/dashboard*"
+          artifacts: "build/nginx*"
