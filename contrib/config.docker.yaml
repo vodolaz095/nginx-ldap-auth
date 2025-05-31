@@ -9,6 +9,8 @@ webserver:
   profile_prefix: /auth
   subrequest_basic: /subrequest/basic
   subrequest_session: /subrequest/session
+  trusted_proxies:
+    - 127.0.0.1
 
 authenticator:
   ttl: 180s
