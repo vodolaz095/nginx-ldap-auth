@@ -50,8 +50,8 @@ func (api *API) StartAuthAPI(ctx context.Context, cfg config.WebServer) (err err
 	}
 
 	api.engine.Use(otelgin.Middleware("nginx-ldap-auth-api",
-		otelgin.WithSpanNameFormatter(func(r *http.Request) string {
-			return r.Method + " " + r.URL.Path
+		otelgin.WithSpanNameFormatter(func(c *gin.Context) string {
+			return c.Request.Method + " " + c.Request.URL.Path
 		})),
 	)
 	middlewares.UseCookieSession(api.engine, cfg)
