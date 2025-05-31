@@ -8,7 +8,7 @@ require (
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/rs/zerolog v1.34.0
-	github.com/vodolaz095/ldap4gin v1.5.5
+	github.com/vodolaz095/ldap4gin v1.5.6-0.20250531130508-3c9ad99f0c14
 	github.com/vodolaz095/pkg v1.1.1
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.61.0
 	go.opentelemetry.io/otel v1.36.0

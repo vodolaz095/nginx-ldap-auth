@@ -128,8 +128,8 @@ github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 github.com/ugorji/go/codec v1.2.14 h1:yOQvXCBc3Ij46LRkRoh4Yd5qK6LVOgi0bYOXfb7ifjw=
 github.com/ugorji/go/codec v1.2.14/go.mod h1:UNopzCgEMSXjBc6AOMqYvWC1ktqTAfzJZUZgYf6w6lg=
-github.com/vodolaz095/ldap4gin v1.5.5 h1:fjVN6P8Fz905FCQ+AipVDHFxqRQFDR/Bi4MSqhzMnP8=
-github.com/vodolaz095/ldap4gin v1.5.5/go.mod h1:Afd5Ufi4eqYsnTTwYrpNEVOS0+au1iDxTBhhWhdVjA0=
+github.com/vodolaz095/ldap4gin v1.5.6-0.20250531130508-3c9ad99f0c14 h1:IPanIq6K6W1TW0sBrqlrlVcPO9KZz6O//uSYEtyrFx0=
+github.com/vodolaz095/ldap4gin v1.5.6-0.20250531130508-3c9ad99f0c14/go.mod h1:Afd5Ufi4eqYsnTTwYrpNEVOS0+au1iDxTBhhWhdVjA0=
 github.com/vodolaz095/pkg v1.1.1 h1:OkZATdVqwP7mMQLZKy0i87rwx6u4NQkfP8BcLxhYa2E=
 github.com/vodolaz095/pkg v1.1.1/go.mod h1:969kY2aZmnvpaN8LPD83JIr6juT5eNyJaQ0LRF7UIN4=
 go.opentelemetry.io/auto/sdk v1.1.0 h1:cH53jehLUN6UFLY71z+NDOiNJqDdPRaXzTel0sJySYA=
