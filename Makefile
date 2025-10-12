@@ -28,7 +28,7 @@ deps:
 	go mod tidy
 
 build:
-	CGO_ENABLED=0 go build -ldflags "-X main.Subversion=$(subver) -X main.Version=$(ver)" -o build/$(app) main.go
+	CGO_ENABLED=0 go build -ldflags "-s -w -X main.Subversion=$(subver) -X main.Version=$(ver)" -o build/$(app) main.go
 
 seed:
 	ldapadd -H ldap://127.0.0.1:1389 -f ldif/seed.ldif -D cn=admin,dc=vodolaz095,dc=ru -x -w someRandomPasswordToMakeHackersSad22223338888
