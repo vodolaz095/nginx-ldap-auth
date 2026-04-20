@@ -15,7 +15,7 @@ func UseCookieSession(router *gin.Engine, cfg config.WebServer) {
 	sessionStore := cookie.NewStore([]byte(cfg.SessionSecret))
 	sessionStore.Options(sessions.Options{
 		Path:     "/",
-		MaxAge:   int(cfg.SessionMaxAgeInSeconds.Seconds()),
+		MaxAge:   int(cfg.SessionMaxAge.Seconds()),
 		HttpOnly: true,
 		Secure:   !gin.IsDebugging(),
 		SameSite: http.SameSiteStrictMode,

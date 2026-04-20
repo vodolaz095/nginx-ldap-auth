@@ -107,6 +107,5 @@ func (api *API) injectBasicAuth() {
 				user.String(), origin, c.Request.Host)
 
 		c.String(http.StatusOK, "Welcome, %s!", username)
-		return
 	})
 }
