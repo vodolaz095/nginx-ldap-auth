@@ -1,4 +1,4 @@
-FROM mirror.gcr.io/golang:1.23.2
+FROM mirror.gcr.io/golang:1.26
 
 VOLUME /app
 WORKDIR /app
